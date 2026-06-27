@@ -1,18 +1,19 @@
-import { Outlet } from 'react-router-dom';
 import { Navbar } from '../navbar/Navbar';
-import { Sidebar } from '../sidebar/Sidebar';
-import './DashboardLayout.css';
+import type { ReactNode } from 'react';
 
-export const DashboardLayout = () => {
+interface DashboardLayoutProps {
+  children: ReactNode;
+  title?: string;
+}
+
+export function DashboardLayout({ children, title }: DashboardLayoutProps) {
   return (
     <div className="dashboard-layout">
       <Navbar />
-      <div className="dashboard-body">
-        <Sidebar />
-        <main className="dashboard-content">
-          <Outlet />
-        </main>
-      </div>
+      <main className="dashboard-main">
+        {title && <h2 className="dashboard-title">{title}</h2>}
+        {children}
+      </main>
     </div>
   );
-};
+}

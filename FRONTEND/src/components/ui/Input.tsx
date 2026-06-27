@@ -1,20 +1,24 @@
-import { forwardRef, type InputHTMLAttributes } from 'react';
+import type { InputHTMLAttributes } from 'react';
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
-  label: string;
-  error?: string | null;
+  label?: string;
+  error?: string;
 }
 
-export const Input = forwardRef<HTMLInputElement, InputProps>(
-  ({ label, error, id, className = '', ...props }, ref) => {
-    return (
-      <div className={`input-group ${error ? 'input-error' : ''} ${className}`}>
-        <label htmlFor={id}>{label}</label>
-        <input id={id} ref={ref} {...props} />
-        {error && <span className="input-error-text">{error}</span>}
-      </div>
-    );
-  }
-);
+export function Input({
+  label,
+  error,
+  className = '',
+  id,
+  ...props
+}: InputProps) {
+  const inputId = id || label?.toLowerCase().replace(/\s+/g, '-');
 
-Input.displayName = 'Input';
+  return (
+    <div className="input-group">
+      {label && <label htmlFor={inputId}>{label}</label>}
+      <input id={inputId} className={`input ${error ? 'input--error' : ''} ${className}`} {...props} />
+      {error && <span className="input-error">{error}</span>}
+    </div>
+  );
+}

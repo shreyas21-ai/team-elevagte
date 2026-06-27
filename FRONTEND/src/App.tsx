@@ -1,48 +1,48 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider } from './context/AuthContext';
-import { ToastProvider } from './context/ToastContext';
-import { ProtectedRoute } from './components/auth/ProtectedRoute';
-import { DashboardLayout } from './components/layout/DashboardLayout';
-import { Login } from './app/(auth)/login/Login';
-import { CustomerDashboard } from './app/(dashboard)/customer/Dashboard';
-import { CustomerApply } from './app/(dashboard)/customer/Apply';
-import { CustomerHistory } from './app/(dashboard)/customer/History';
-import { CustomerProfile } from './app/(dashboard)/customer/Profile';
-import { OfficerDashboard } from './app/(dashboard)/officer/Dashboard';
-import { OfficerApplications } from './app/(dashboard)/officer/Applications';
-import { OfficerReview } from './app/(dashboard)/officer/Review';
-import { OfficerProfile } from './app/(dashboard)/officer/Profile';
-import './App.css';
+import { Navigate, Route, Routes } from 'react-router-dom'
+import { ProtectedRoute } from './components/auth/ProtectedRoute'
+import { useAuth } from './context/AuthContext'
+import { DoctorDashboard } from './pages/doctor/Dashboard'
+import { Login } from './pages/Login'
+import { BookAppointment } from './pages/patient/BookAppointment'
+import { PatientDashboard } from './pages/patient/Dashboard'
+
+function HomeRedirect() {
+  const { isAuthenticated, user } = useAuth()
+  if (!isAuthenticated) return <Navigate to="/login" replace />
+  return <Navigate to={user?.role === 'doctor' ? '/doctor' : '/patient'} replace />
+}
 
 function App() {
   return (
-    <BrowserRouter>
-      <AuthProvider>
-        <ToastProvider>
-          <Routes>
-            <Route path="/login" element={<Login />} />
-            <Route element={<ProtectedRoute />}>
-              <Route element={<DashboardLayout />}>
-                <Route element={<ProtectedRoute allowedRoles={['customer']} />}>
-                  <Route path="/customer/dashboard" element={<CustomerDashboard />} />
-                  <Route path="/customer/apply" element={<CustomerApply />} />
-                  <Route path="/customer/history" element={<CustomerHistory />} />
-                  <Route path="/customer/profile" element={<CustomerProfile />} />
-                </Route>
-                <Route element={<ProtectedRoute allowedRoles={['officer']} />}>
-                  <Route path="/officer/dashboard" element={<OfficerDashboard />} />
-                  <Route path="/officer/applications" element={<OfficerApplications />} />
-                  <Route path="/officer/review/:id" element={<OfficerReview />} />
-                  <Route path="/officer/profile" element={<OfficerProfile />} />
-                </Route>
-              </Route>
-            </Route>
-            <Route path="*" element={<Navigate to="/login" replace />} />
-          </Routes>
-        </ToastProvider>
-      </AuthProvider>
-    </BrowserRouter>
-  );
+    <Routes>
+      <Route path="/" element={<HomeRedirect />} />
+      <Route path="/login" element={<Login />} />
+      <Route
+        path="/patient"
+        element={
+          <ProtectedRoute role="patient">
+            <PatientDashboard />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/patient/book"
+        element={
+          <ProtectedRoute role="patient">
+            <BookAppointment />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/doctor"
+        element={
+          <ProtectedRoute role="doctor">
+            <DoctorDashboard />
+          </ProtectedRoute>
+        }
+      />
+    </Routes>
+  )
 }
 
-export default App;
+export default App

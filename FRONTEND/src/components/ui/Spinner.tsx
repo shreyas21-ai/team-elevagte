@@ -1,7 +1,10 @@
-interface SpinnerProps {
-  size?: 'sm' | 'md' | 'lg';
+export function Spinner({ size = 40 }: { size?: number }) {
+  return (
+    <div className="spinner-wrap">
+      <div
+        className="spinner"
+        style={{ width: size, height: size, borderWidth: Math.max(3, size / 12) }}
+      />
+    </div>
+  );
 }
-
-export const Spinner = ({ size = 'md' }: SpinnerProps) => {
-  return <span className={`spinner spinner-${size}`} />;
-};

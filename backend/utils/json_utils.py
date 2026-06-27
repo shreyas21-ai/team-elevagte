@@ -1,10 +1,17 @@
-from datetime import date, datetime, time
+from datetime import date, datetime, time, timedelta
 from decimal import Decimal
 
 
 def serialize_value(value):
     if isinstance(value, (date, datetime, time)):
         return value.isoformat()
+
+    if isinstance(value, timedelta):
+        total = value.total_seconds()
+        hours = int(total // 3600)
+        minutes = int((total % 3600) // 60)
+        seconds = int(total % 60)
+        return f"{hours:02d}:{minutes:02d}:{seconds:02d}"
 
     if isinstance(value, Decimal):
         return float(value)

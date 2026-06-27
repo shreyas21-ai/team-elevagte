@@ -5,10 +5,10 @@ USE careflow;
 
 INSERT INTO users (email, password_hash, full_name, role, session_token)
 VALUES
-('patient1@example.com', 'scrypt:32768:8:1$replace_with_generated_hash', 'Aarav Sharma', 'patient', 'patient-token-123'),
-('patient2@example.com', 'scrypt:32768:8:1$replace_with_generated_hash', 'Meera Iyer', 'patient', 'patient-token-456'),
-('doctor1@example.com', 'scrypt:32768:8:1$replace_with_generated_hash', 'Dr. Kavya Rao', 'doctor', 'doctor-token-123'),
-('doctor2@example.com', 'scrypt:32768:8:1$replace_with_generated_hash', 'Dr. Arjun Menon', 'doctor', 'doctor-token-456');
+('patient1@example.com', 'scrypt:32768:8:1$hJHNlkuEierbtxy3$aeab79b3d19d12a32711100e13612fcbb5357b205d8f0f1586bda11d0f586ac44c43e5628f8e6fcdfc43ba02c116604f000bb4c7f4f8c05ef10bd751e3336212', 'Aarav Sharma', 'patient', 'patient-token-123'),
+('patient2@example.com', 'scrypt:32768:8:1$hJHNlkuEierbtxy3$aeab79b3d19d12a32711100e13612fcbb5357b205d8f0f1586bda11d0f586ac44c43e5628f8e6fcdfc43ba02c116604f000bb4c7f4f8c05ef10bd751e3336212', 'Meera Iyer', 'patient', 'patient-token-456'),
+('doctor1@example.com', 'scrypt:32768:8:1$hJHNlkuEierbtxy3$aeab79b3d19d12a32711100e13612fcbb5357b205d8f0f1586bda11d0f586ac44c43e5628f8e6fcdfc43ba02c116604f000bb4c7f4f8c05ef10bd751e3336212', 'Dr. Kavya Rao', 'doctor', 'doctor-token-123'),
+('doctor2@example.com', 'scrypt:32768:8:1$hJHNlkuEierbtxy3$aeab79b3d19d12a32711100e13612fcbb5357b205d8f0f1586bda11d0f586ac44c43e5628f8e6fcdfc43ba02c116604f000bb4c7f4f8c05ef10bd751e3336212', 'Dr. Arjun Menon', 'doctor', 'doctor-token-456');
 
 INSERT INTO doctors (user_id, specialty, room_number)
 VALUES

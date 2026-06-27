@@ -18,6 +18,60 @@ from utils.validators import (
 appointments_bp = Blueprint("appointments", __name__, url_prefix="/api/v1/appointments")
 
 
+@appointments_bp.route("/my", methods=["GET"])
+def get_my_appointments():
+    user = get_authenticated_user()
+
+    if user is None:
+        return jsonify({"error": "Invalid or missing token"}), 401
+
+    if not user_has_role(user, "patient"):
+        return jsonify({"error": "Only patients can view their appointments"}), 403
+
+    connection = get_db_connection()
+
+    if connection is None:
+        return jsonify({"error": "Database connection failed"}), 500
+
+    cursor = None
+
+    try:
+        cursor = connection.cursor(dictionary=True)
+        cursor.execute(
+            """
+            SELECT
+                appointments.id AS appointment_id,
+                appointments.patient_id,
+                users.full_name AS patient_name,
+                doctors.id AS doctor_id,
+                doc_users.full_name AS doctor_name,
+                doctors.specialty,
+                doctors.room_number,
+                appointments.appointment_date,
+                appointments.time_slot,
+                appointments.queue_number,
+                appointments.status
+            FROM appointments
+            INNER JOIN users ON appointments.patient_id = users.id
+            INNER JOIN doctors ON appointments.doctor_id = doctors.id
+            INNER JOIN users AS doc_users ON doctors.user_id = doc_users.id
+            WHERE appointments.patient_id = %s
+            ORDER BY appointments.appointment_date DESC, appointments.time_slot DESC
+            """,
+            (user["id"],),
+        )
+        appointments = serialize_rows(cursor.fetchall())
+
+        return jsonify({"appointments": appointments}), 200
+    except Error as error:
+        print(f"Fetch patient appointments error: {error}")
+        return jsonify({"error": "Failed to fetch appointments"}), 500
+    finally:
+        if cursor:
+            cursor.close()
+        connection.close()
+
+
 @appointments_bp.route("/book", methods=["POST"])
 def book_appointment():
     user = get_authenticated_user()
