@@ -1,0 +1,149 @@
+{
+  "info": {
+    "name": "CareFlow Backend APIs",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://127.0.0.1:5000"
+    },
+    {
+      "key": "patient_token",
+      "value": "patient-token-123"
+    },
+    {
+      "key": "doctor_token",
+      "value": "doctor-token-123"
+    },
+    {
+      "key": "appointment_id",
+      "value": "1"
+    }
+  ],
+  "item": [
+    {
+      "name": "Health Check",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{base_url}}/"
+      },
+      "response": [
+        {
+          "name": "200 OK",
+          "status": "OK",
+          "code": 200,
+          "body": "{\n  \"message\": \"CareFlow Backend Running\"\n}"
+        }
+      ]
+    },
+    {
+      "name": "Get Doctors",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{base_url}}/api/v1/doctors"
+      },
+      "response": [
+        {
+          "name": "200 OK",
+          "status": "OK",
+          "code": 200,
+          "body": "{\n  \"doctors\": [\n    {\n      \"doctor_id\": 1,\n      \"doctor_name\": \"Dr. Kavya Rao\",\n      \"specialty\": \"Cardiology\",\n      \"room_number\": \"A101\"\n    }\n  ]\n}"
+        }
+      ]
+    },
+    {
+      "name": "Book Appointment",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{patient_token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"doctor_id\": 1,\n  \"appointment_date\": \"2026-06-27\",\n  \"time_slot\": \"10:30:00\"\n}"
+        },
+        "url": "{{base_url}}/api/v1/appointments/book"
+      },
+      "response": [
+        {
+          "name": "201 Created",
+          "status": "Created",
+          "code": 201,
+          "body": "{\n  \"message\": \"Appointment booked successfully\",\n  \"appointment_id\": 3,\n  \"queue_number\": 3,\n  \"status\": \"scheduled\"\n}"
+        },
+        {
+          "name": "401 Unauthorized",
+          "status": "Unauthorized",
+          "code": 401,
+          "body": "{\n  \"error\": \"Invalid or missing token\"\n}"
+        }
+      ]
+    },
+    {
+      "name": "Doctor Today Appointments",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{doctor_token}}"
+          }
+        ],
+        "url": "{{base_url}}/api/v1/appointments/doctor/today"
+      },
+      "response": [
+        {
+          "name": "200 OK",
+          "status": "OK",
+          "code": 200,
+          "body": "{\n  \"appointments\": [\n    {\n      \"appointment_id\": 1,\n      \"patient_id\": 1,\n      \"patient_name\": \"Aarav Sharma\",\n      \"appointment_date\": \"2026-06-27\",\n      \"time_slot\": \"10:00:00\",\n      \"queue_number\": 1,\n      \"status\": \"scheduled\"\n    }\n  ]\n}"
+        }
+      ]
+    },
+    {
+      "name": "Update Appointment Status",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{doctor_token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"status\": \"serving\"\n}"
+        },
+        "url": "{{base_url}}/api/v1/appointments/{{appointment_id}}/status"
+      },
+      "response": [
+        {
+          "name": "200 OK",
+          "status": "OK",
+          "code": 200,
+          "body": "{\n  \"message\": \"Appointment status updated successfully\",\n  \"appointment_id\": 1,\n  \"status\": \"serving\"\n}"
+        },
+        {
+          "name": "400 Bad Request",
+          "status": "Bad Request",
+          "code": 400,
+          "body": "{\n  \"error\": \"status must be one of: scheduled, serving, completed, absent\"\n}"
+        }
+      ]
+    }
+  ]
+}
